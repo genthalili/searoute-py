@@ -5,17 +5,21 @@ import networkx as nx
 
 import geopandas as gpd
 import momepy
-import sys
-import os
+from os import path
+
+import warnings
+warnings.filterwarnings("ignore")
 
 '''
 path of the geojson network - martine network 
 Not for routing purposes! This library was developed to generate realistic-looking searoutes for visualizations of maritime routes, not for mariners to route their ships.
 '''
-path = '.\data\marnet_densified.json'
+
+here = path.abspath(path.dirname(__file__))
+path2Json = 'data/marnet_densified.json'
 
 #convert geojson to geopandas
-lines = gpd.GeoDataFrame.from_file( os.path.join(sys.path[0], path) )
+lines = gpd.GeoDataFrame.from_file( path.join(here, path2Json) )
 
 #convert geopandas to networkx with momepy
 G = momepy.gdf_to_nx(lines)
