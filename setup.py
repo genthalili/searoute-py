@@ -23,5 +23,9 @@ setup(
   classifiers=classifiers,
   keywords='searoute map sea route', 
   packages=find_packages(),
-  install_requires=['turfpy', 'geojson', 'networkx', 'geopandas', 'momepy'] 
+  install_requires=['turfpy', 'geojson', 'networkx', 'geopandas', 'momepy'],
+      project_urls={
+        "Documentation": "https://github.com/genthalili/searoute-py/blob/main/README.md",
+        "Repository": "https://github.com/genthalili/searoute-py",
+    },
 )
