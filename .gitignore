@@ -1,2 +1,3 @@
 dist/
-*egg-info/
+*.egg-info/
+searoute/__pychache__

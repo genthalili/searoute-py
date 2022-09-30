@@ -1,6 +1,6 @@
 Change Log
 ==========
 
-1.0.0 (28/09/2022)
+1.0.2 (30/09/2022)
 ------------------
-- First Release
+- First Release, published module
