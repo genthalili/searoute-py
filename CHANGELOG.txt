@@ -11,3 +11,7 @@ Change Log
 - changed the core of the calculation to osmnx library for better perfomance
 - making 1.0.2 obsolete
 - added duration measurement together with length in the LineString properties
+
+1.0.3 (04/10/2022)
+------------------
+- fix requirements of the module
