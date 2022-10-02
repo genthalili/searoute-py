@@ -1,9 +1,8 @@
 import searoute as sr
 
 #Define origin and destination points:
-origin = [6, 6]
-
-destination = [-118.2629, 12]
+origin = [21.1545, 55.6526]
+destination = [-118.2629, 33.7276]
 
 
 route = sr.searoute(origin, destination)
