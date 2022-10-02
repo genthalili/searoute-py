@@ -12,6 +12,10 @@ Change Log
 - making 1.0.2 obsolete
 - added duration measurement together with length in the LineString properties
 
-1.0.3 (04/10/2022)
+1.0.4 (04/10/2022)
 ------------------
 - fix requirements of the module
+
+1.0.5 (04/10/2022)
+------------------
+- Adjusted network (.json) by connecting all LineStrings in order to return a route from any location to any location
