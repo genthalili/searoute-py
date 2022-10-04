@@ -4,3 +4,10 @@ Change Log
 1.0.2 (30/09/2022)
 ------------------
 - First Release, published module
+
+
+1.0.3 (04/10/2022)
+------------------
+- changed the core of the calculation to osmnx library for better perfomance
+- making 1.0.2 obsolete
+- added duration measurement together with length in the LineString properties
