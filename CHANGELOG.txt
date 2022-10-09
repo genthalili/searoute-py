@@ -23,3 +23,8 @@ Change Log
 1.0.6 (05/10/2022)
 ------------------
 - Imporved network connectivity
+
+1.0.7 (13/10/2022)
+------------------
+- Imporved network connectivity
+- Connection points were not adjusted
