@@ -8,7 +8,7 @@ from os import path
 #pathGeojson = 'C:\dev\dev-py-packages\searoute-py-package\searoute\data\marnet_densified.json'
 
 here = path.abspath(path.dirname(__file__))
-path2Json = 'data/marnet_densified.json'
+path2Json = 'data/marnet_densified_v2.geojson'
 pathGeojson =  path.join(here, path2Json) 
 
 def createFeatureCollection(path):
