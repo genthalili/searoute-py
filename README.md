@@ -38,6 +38,23 @@ routeMiles = sr.searoute(origin, destination, units="mi")
 
 ~~~
 
+## Parameters
+
+`origin`    
+Mandatory. An array of 2 floats representing longitude and latitude i.e : `[{lon}, {lat}]`
+
+`destination`    
+Mandatory. An array of 2 floats representing longitude and latitude i.e : `[{lon}, {lat}]`
+
+`units`    
+Optional. Default to `km` = kilometers, can be `m` = meters `mi` = miles `ft` = feets `in` = inches `deg` = degrees `cen` = centimeters `rad` = radians `naut` = nauticals `yd` = yards
+
+`speed_knot`    
+Optional. Speed of the boat, default 24 knots 
+
+`append_orig_dest`    
+Optional. If the origin and destination should be appended to the LineString, default is `False`
+
 ## Credits
 
 Based on Eurostat's [Searoute Java library](https://github.com/eurostat/searoute) and Dijkstra's algorithm implemented by [perliedman](https://www.liedman.net/geojson-path-finder/).

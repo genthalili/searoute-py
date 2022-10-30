@@ -9,6 +9,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 path2Json = 'data/marnet_densified_v2.geojson'
+#path2Json = 'data/maritime-trade-routes.geojson'
 pathGeojson =  path.join(here, path2Json) 
 
 def createFeatureCollection(path):
@@ -58,8 +59,11 @@ def createGraph():
     
     G = nx.MultiDiGraph()
 
-    G.graph['crs'] = fc.crs['properties']['name']
-
+    try:
+        G.graph['crs'] = fc.crs['properties']['name']
+    except:
+         G.graph['crs'] = 'EPSG:3857'
+         
     for i in fc.features:
         coords = i['geometry']['coordinates']
         coord_l = len(coords)
@@ -70,17 +74,21 @@ def createGraph():
             c_node = get_unique_number(c_X, c_Y)
             G.add_node(c_node, x=c_X, y=c_Y)
 
+
+
             if(k<coord_l-1):
                 n_coord = coords[k+1]
                 n_X = n_coord[0]
                 n_Y = n_coord[1]
                 nx_node = get_unique_number(n_X, n_Y)
 
+
                 ll = LineString([(c_X, c_Y), (n_X, n_Y)])
                 lenght = measurement.length(ll)
                 G.add_edge(c_node, nx_node, weight=lenght)
                 G.add_edge(nx_node, c_node, weight=lenght)
 
+        
             k= k+1
     
     return G
@@ -89,14 +97,15 @@ def createGraph():
 
 G = createGraph()
 
-def searoute(origin, destination, units='km', speed_knot=24):
+def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest = False):
     """
     searoute Returnes the shortest sea route between two points on Earth.
 
     :param origin: a point as array lon, lat format ex. [0.3515625, 50.064191736659104]
     :param destination: a point as array lon, lat format ex. [117.42187500000001, 39.36827914916014]
     :param units: units default to 'km' = kilometers, can be 'm' = meters 'mi = miles 'ft' = feets 'in' = inches 'deg' = degrees 'cen' = centimeters 'rad' = radians 'naut' = nauticals 'yd' = yards
-    :param speed_knot: spped of the boat, default 24 knots 
+    :param speed_knot: speed of the boat, default 24 knots 
+    :param append_orig_dest: add origin and dest geopoints in the LineString of the route, default is False
     :return: a Feature (geojson) of a LineSring of sea route with parameters : unit and legth
     """ 
     
@@ -108,9 +117,35 @@ def searoute(origin, destination, units='km', speed_knot=24):
     # Get the shortest route by distance
     shortest_route_by_distance = ox.shortest_path(G, origin_node, destination_node, weight='weight')
     ls = []
+    previousX = None
     for i in shortest_route_by_distance:
         node = G.nodes[i]
-        ls.append((node['x'], node['y']))
+        nowX = node['x']
+        
+        if previousX:
+            if previousX-nowX<-180:
+                nowX = -180-(180-nowX)
+            elif previousX-nowX>180:
+                nowX = nowX+360
+        ls.append((nowX, node['y']))
+        previousX = nowX
+
+    if append_orig_dest:
+
+        if len(ls) == 1:
+            #to avoid strage connections remove, eventually non-ocean connections with one coord, remove it to add origin and dest 
+            ls = []
+        # add origin at fist position of the linestring
+        ls.insert(0, origin )
+        # add destination at the last position of the linestring
+        nowX = destination[0]
+        if previousX:
+            if previousX-nowX<-180:
+                nowX = -180-(180-nowX)
+            elif previousX-nowX>180:
+                nowX = nowX+360
+        ls.append((nowX, destination[1]))
+
         
     lineString = LineString(ls)
         
