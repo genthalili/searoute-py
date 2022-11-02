@@ -28,3 +28,9 @@ Change Log
 ------------------
 - Imporved network connectivity
 - Connection points were not adjusted
+
+1.0.8 (25/10/2022)
+------------------
+- Imporved network connectivity
+- Added append_orig_dest parameter as input to append origin and destination points to the LineString
+- Updated README.md
