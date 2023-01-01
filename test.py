@@ -5,7 +5,8 @@ origin = [21.1545, 55.6526]
 destination = [-118.2629, 33.7276]
 
 
-route = sr.searoute(origin, destination, append_orig_dest=True)
+
+route = sr.searoute(origin, destination, append_orig_dest=True, restrictions=['northwest'])
 # > Returns a GeoJSON LineString Feature
 # show route distance with unit
 print("{:.1f} {}".format(route.properties['length'], route.properties['units']))
