@@ -22,15 +22,21 @@ Change Log
 
 1.0.6 (05/10/2022)
 ------------------
-- Imporved network connectivity
+- Improved network connectivity
 
 1.0.7 (13/10/2022)
 ------------------
-- Imporved network connectivity
+- Improved network connectivity
 - Connection points were not adjusted
 
 1.0.8 (25/10/2022)
 ------------------
-- Imporved network connectivity
+- Improved network connectivity
 - Added append_orig_dest parameter as input to append origin and destination points to the LineString
+- Updated README.md
+
+1.0.9 (04/01/2023)
+------------------
+- Improved network connectivity
+- Added restrictions parameter as input to control restrictivity of connections due to different reasons
 - Updated README.md

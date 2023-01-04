@@ -55,6 +55,11 @@ Optional. Speed of the boat, default 24 knots
 `append_orig_dest`    
 Optional. If the origin and destination should be appended to the LineString, default is `False`
 
+`restrictions`    
+Optional. List of passages to be restricted during calculations.
+Possible values : `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`;
+default is `['northwest']`
+
 ## Credits
 
 Based on Eurostat's [Searoute Java library](https://github.com/eurostat/searoute) and Dijkstra's algorithm implemented by [perliedman](https://www.liedman.net/geojson-path-finder/).

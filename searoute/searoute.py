@@ -67,6 +67,9 @@ def createGraph():
     for i in fc.features:
         coords = i['geometry']['coordinates']
         coord_l = len(coords)
+
+        properties = i['properties']
+
         k = 0
         for l in coords:
             c_X = l[0]
@@ -85,19 +88,26 @@ def createGraph():
 
                 ll = LineString([(c_X, c_Y), (n_X, n_Y)])
                 lenght = measurement.length(ll)
-                G.add_edge(c_node, nx_node, weight=lenght)
-                G.add_edge(nx_node, c_node, weight=lenght)
+                G.add_edge(c_node, nx_node, weight=lenght, **properties)
+                G.add_edge(nx_node, c_node, weight=lenght, **properties)
 
-        
             k= k+1
     
     return G
 
-
-
 G = createGraph()
 
-def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest = False):
+#possible passages: babalmandab, bosporus, gibraltar, suez, panama, ormuz, northwest
+RESTRICTIONS = ['northwest']
+
+def filter_edge(n1, n2, n3):
+    val = G[n1][n2][n3].get('passage')
+
+    if (val is None) or (val not in RESTRICTIONS):
+        return True
+    return False
+
+def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest = False, restrictions = RESTRICTIONS):
     """
     searoute Returnes the shortest sea route between two points on Earth.
 
@@ -106,20 +116,26 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest = 
     :param units: units default to 'km' = kilometers, can be 'm' = meters 'mi = miles 'ft' = feets 'in' = inches 'deg' = degrees 'cen' = centimeters 'rad' = radians 'naut' = nauticals 'yd' = yards
     :param speed_knot: speed of the boat, default 24 knots 
     :param append_orig_dest: add origin and dest geopoints in the LineString of the route, default is False
+    :param restrictions: an list of restrictions of paths to awoid, use as per your specific need; default restricted ['northwest']; possible passages: babalmandab, bosporus, gibraltar, suez, panama, ormuz, northwest
     :return: a Feature (geojson) of a LineSring of sea route with parameters : unit and legth
     """ 
-    
 
+
+    global RESTRICTIONS
+    RESTRICTIONS = restrictions
+
+    H = nx.subgraph_view(G, filter_edge=filter_edge)
+    
     # In the graph, get the nodes closest to the points
-    origin_node = ox.distance.nearest_nodes(G, origin[0], origin[1])
-    destination_node = ox.distance.nearest_nodes(G, destination[0], destination[1])
+    origin_node = ox.distance.nearest_nodes(H, origin[0], origin[1])
+    destination_node = ox.distance.nearest_nodes(H, destination[0], destination[1])
 
     # Get the shortest route by distance
-    shortest_route_by_distance = ox.shortest_path(G, origin_node, destination_node, weight='weight')
+    shortest_route_by_distance = ox.shortest_path(H, origin_node, destination_node, weight='weight')
     ls = []
     previousX = None
     for i in shortest_route_by_distance:
-        node = G.nodes[i]
+        node = H.nodes[i]
         nowX = node['x']
         
         if previousX:
