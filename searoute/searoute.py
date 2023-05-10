@@ -8,7 +8,7 @@ from os import path
 #pathGeojson = 'C:\dev\dev-py-packages\searoute-py-package\searoute\data\marnet_densified.json'
 
 here = path.abspath(path.dirname(__file__))
-path2Json = 'data/marnet_densified_v2.geojson'
+path2Json = 'data/marnet_densified_v2_improved.geojson'
 #path2Json = 'data/maritime-trade-routes.geojson'
 pathGeojson =  path.join(here, path2Json) 
 
