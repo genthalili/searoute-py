@@ -54,7 +54,7 @@ routeMiles = sr.searoute(origin, destination, units="mi")
 ### Example with more parameters :
 ~~~py
 ## Using all parameters, wil include ports as well
-route = sr.searoute(origin, destination, append_orig_dest=True, restrictions=['northwest'], include_ports=True, port_params={'only_terminals':True, 'country_pol': 'FR', 'country_pod' :'CH'})
+route = sr.searoute(origin, destination, append_orig_dest=True, restrictions=['northwest'], include_ports=True, port_params={'only_terminals':True, 'country_pol': 'FR', 'country_pod' :'CN'})
 ~~~
 returns :
 ~~~json
