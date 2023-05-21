@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://raw.githubusercontent.com/genthalili/searoute-py/main/searoute/assets/searoute-logo.png" alt="Searoute-py" width=350>
+ <img src="https://raw.githubusercontent.com/genthalili/searoute-py/main/searoute/assets/searoute_logo.png" alt="Searoute-py" width=350>
 </p>
 <p align="center">
 <a href="https://pypi.org/project/searoute" target="_blank">
@@ -60,7 +60,7 @@ returns :
 ~~~json
 {
   "geometry": {
-    "coordinates": [[..],[..],..],
+    "coordinates": [],
     "type": "LineString"
   },
   "properties": {
