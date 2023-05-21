@@ -6,14 +6,19 @@ here = path.abspath(path.dirname(__file__))
 classifiers = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Education',
-    'Operating System :: Microsoft :: Windows :: Windows 10',
+    'Intended Audience :: Customer Service',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Telecommunications Industry',
+    'Operating System :: OS Independent',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3'
 ]
 
 setup(
     name='searoute',
-    version='1.0.9',
+    version='1.1.0',
     description='A python package for generating the shortest sea route between two points on Earth.',
     long_description=open('README.md').read() + '\n\n' +
     open('CHANGELOG.txt').read(),
@@ -23,7 +28,7 @@ setup(
     author_email='genthalili@users.noreply.github.com',
     license='MIT',
     classifiers=classifiers,
-    keywords='searoute map sea route',
+    keywords='searoute map sea route ocean ports',
     packages=find_packages(),
     install_requires=['turfpy', 'geojson', 'networkx', 'osmnx'],
     project_urls={

@@ -38,5 +38,11 @@ Change Log
 1.0.9 (04/01/2023)
 ------------------
 - Improved network connectivity
-- Added restrictions parameter as input to control restrictivity of connections due to different reasons
+- Added restrictions parameter as input to control restrictiveness of connections due to different reasons
+- Updated README.md
+
+1.1.0 (23/05/2023)
+------------------
+- Improved network connectivity
+- Added new feature : closest port of load and port of discharge
 - Updated README.md
