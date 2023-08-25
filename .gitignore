@@ -3,3 +3,8 @@ dist/
 searoute/__pychache__
 *__pychache__*
 *.pyc
+*.ipynb*
+test*.py
+*.csv
+.DS_Store
+docs/

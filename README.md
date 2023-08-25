@@ -16,7 +16,7 @@
 ---
 ## Searoute py
 
-An python package for generating the shortest sea route between two points on Earth. 
+A python package for generating the shortest sea route between two points on Earth. 
 
 If points are on land, the function will attempt to find the nearest point on the sea and calculate the route from there. 
 
@@ -51,6 +51,65 @@ print("{:.1f} {}".format(route.properties['length'], route.properties['units']))
 # 'cen' = centimeters 'rad' = radians 'naut' = nauticals 'yd' = yards
 routeMiles = sr.searoute(origin, destination, units="mi")
 ~~~
+### Bring your network :
+```py
+# using version >= 1.2.0
+
+# nodes representing (1,2) of lon = 1, lat = 2
+# required : 'x' for lon, 'y' for lat ; optional 'tt' for terminals (boolean or None)
+my_nodes = {
+    (1, 2): {'x': 1, 'y': 2},
+    (2, 2): {'x': 2, 'y': 2}
+}
+# (1,2) -> (2,2) with weight, representing the distance, other attribures can be added
+# recognized attributes are : `weight` (distance), `passage` (name of the passage to be restricted by restrictions) 
+my_edges = {
+    (1, 2): {
+        (2, 2): {"weight": 10, "other_attr": "some_value"}
+    }
+}
+
+# Marnet
+myM = sr.from_nodes_edges_set(sr.Marnet(), my_nodes, my_edges)
+# Ports
+myP = sr.from_nodes_edges_set(sr.Ports(), my_nodes, None) 
+
+# get shotest with your ports
+route_with_my_ports = sr.searoute(origin, destination, P = myP, include_ports=True)
+
+# get shotest with your ports
+route_with_my_ntw = sr.searoute(origin, destination, P = myP, M = myM )
+
+```
+### Nodes and Edges
+#### Nodes 
+A node (or vertex) is a fondamantal unit of which the graphs Ports and Marnet are formed.
+
+In searoute, a node is represend by it's id as a ``tuple`` of lon,lat, and it's attributes:
+- `x` : float ; required
+- `y` : float ; required
+- `t` : bool ; optional. default is `False`, will be used for filtering ports with `terminals`.
+```py
+{
+    (lon:float, lat:float): {'x': lon:float, 'y': lat:float, *args:any},
+    ...
+}
+```
+#### Edges 
+An edge is a line or connection between a note and an other. This connection can be represented by a set of node_id->node_id with it's attributes:
+- `weight` : float ; required. Can be distance, cost etc... if not set will by default calculate the distance between nodes using [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula).
+- `passage` : str ; optional.  Can be one of Passage (searoute.classes.passages.Passage). If not not set, no restriction will be applied. If set make sure to update `Marnet().restrictions = [...]` with your list of passages to avoid.
+```py
+{
+    (lon:float, lat:float)->node_id: {
+        (lon:float, lat:float)->node_id: {
+          "weight": distance:float, 
+          *args: any}
+    },
+    ...
+}
+```
+
 ### Example with more parameters :
 ~~~py
 ## Using all parameters, wil include ports as well
@@ -91,10 +150,10 @@ returns :
 ## Parameters
 
 `origin`    
-Mandatory. An array of 2 floats representing longitude and latitude i.e : `[{lon}, {lat}]`
+Mandatory. A tuple or array of 2 floats representing longitude and latitude i.e : `({lon}, {lat})`
 
 `destination`    
-Mandatory. An array of 2 floats representing longitude and latitude i.e : `[{lon}, {lat}]`
+Mandatory. A tuple or array of 2 floats representing longitude and latitude i.e : `({lon}, {lat})`
 
 `units`    
 Optional. Default to `km` = kilometers, can be `m` = meters `mi` = miles `ft` = feets `in` = inches `deg` = degrees `cen` = centimeters `rad` = radians `naut` = nauticals `yd` = yards

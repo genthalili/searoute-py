@@ -18,7 +18,7 @@ classifiers = [
 
 setup(
     name='searoute',
-    version='1.1.0',
+    version='1.2.0',
     description='A python package for generating the shortest sea route between two points on Earth.',
     long_description=open('README.md').read() + '\n\n' +
     open('CHANGELOG.txt').read(),
@@ -30,7 +30,7 @@ setup(
     classifiers=classifiers,
     keywords='searoute map sea route ocean ports',
     packages=find_packages(),
-    install_requires=['turfpy', 'geojson', 'networkx', 'osmnx'],
+    install_requires=['geojson', 'networkx'],
     project_urls={
         "Documentation": "https://github.com/genthalili/searoute-py/blob/main/README.md",
         "Source": "https://github.com/genthalili/searoute-py",
