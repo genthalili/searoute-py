@@ -5,7 +5,6 @@ Change Log
 ------------------
 - First Release, published module
 
-
 1.0.3 (04/10/2022)
 ------------------
 - changed the core of the calculation to osmnx library for better perfomance
@@ -46,3 +45,11 @@ Change Log
 - Improved network connectivity
 - Added new feature : closest port of load and port of discharge
 - Updated README.md
+
+1.2.0 (24/08/2023)
+------------------
+- 35x Faster: Significantly accelerated compared to v1.1 by rethinking and reorganizing the code.
+- Re-thinked Class Design: Re-structured and implified class structure.
+- Easy API Access
+- Improved Network Connectivity: Enhanced network reliability.
+- Updated README.md: Revised for the latest information.
