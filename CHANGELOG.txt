@@ -53,3 +53,7 @@ Change Log
 - Easy API Access
 - Improved Network Connectivity: Enhanced network reliability.
 - Updated README.md: Revised for the latest information.
+
+1.2.1 (28/08/2023)
+------------------
+- Patch fixed issue when querying country with no port result

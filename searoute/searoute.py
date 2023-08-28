@@ -36,6 +36,12 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details
     """
 
+    if not origin or not all(origin):
+        raise Exception('Origin/Destination must not be empty or None')
+
+    if not destination or not all(destination):
+        raise Exception('Origin/Destination must not be empty or None')
+
     if P is None:
         raise Exception('Ports network must not be None')
 
