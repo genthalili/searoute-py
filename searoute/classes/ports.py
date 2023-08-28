@@ -73,6 +73,11 @@ class Ports(nx.Graph):
 
         filtered_nodes = [n for n, data in self.nodes(data=True) if data.get(
             't') == terminal_filter and cty_filter(data.get('port')[:2], cty)]
+        
+        if not filtered_nodes or len(filtered_nodes)==0:
+            # filter without cty as cty seems to not have ports :/
+            filtered_nodes = [n for n, data in self.nodes(data=True) if data.get(
+            't') == terminal_filter]
         subgraph = self.subgraph(filtered_nodes)
         return subgraph
 
