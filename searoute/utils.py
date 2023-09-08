@@ -356,3 +356,34 @@ def load_from_geojson(G, *geojson_file):
             handle_geometry(data.geometry, data.properties)
 
     return G
+
+
+def normalize_linestring(prev, now):
+    """
+    Normalize the coordinate for the lineString.
+    The previus (`prev`) parameter will dictate the direction of the string
+
+    Parameters
+    ----------
+    prev : a coord of (lon, lat)
+    now : a coord to fix of format (lon, lat)
+
+    Returns
+    -------
+    a cordinate normalized or fixt coordinate of format (lon, lat)
+
+    """
+    if not prev:
+        return now
+    
+    now_x, now_y = now
+    prev_x, prev_y = prev
+
+    if not prev_x is None:
+        px = prev_x-now_x
+        if px < -180:
+            now_x = now_x - 360
+        elif px > 180:
+            now_x = now_x + 360
+    
+    return (now_x, now_y)
