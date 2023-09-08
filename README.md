@@ -47,8 +47,8 @@ route = sr.searoute(origin, destination)
 print("{:.1f} {}".format(route.properties['length'], route.properties['units']))
 
 # Optionally, define the units for the length calculation included in the properties object.
-# Defaults to km, can be can be 'm' = meters 'mi = miles 'ft' = feets 'in' = inches 'deg' = degrees
-# 'cen' = centimeters 'rad' = radians 'naut' = nauticals 'yd' = yards
+# Defaults to km, can be can be 'm' = meters 'mi = miles 'ft' = feet 'in' = inches 'deg' = degrees
+# 'cen' = centimeters 'rad' = radians 'naut' = nautical 'yd' = yards
 routeMiles = sr.searoute(origin, destination, units="mi")
 ~~~
 ### Bring your network :
@@ -61,7 +61,7 @@ my_nodes = {
     (1, 2): {'x': 1, 'y': 2},
     (2, 2): {'x': 2, 'y': 2}
 }
-# (1,2) -> (2,2) with weight, representing the distance, other attribures can be added
+# (1,2) -> (2,2) with weight, representing the distance, other attributes can be added
 # recognized attributes are : `weight` (distance), `passage` (name of the passage to be restricted by restrictions) 
 my_edges = {
     (1, 2): {
@@ -74,18 +74,18 @@ myM = sr.from_nodes_edges_set(sr.Marnet(), my_nodes, my_edges)
 # Ports
 myP = sr.from_nodes_edges_set(sr.Ports(), my_nodes, None) 
 
-# get shotest with your ports
+# get shortest with your ports
 route_with_my_ports = sr.searoute(origin, destination, P = myP, include_ports=True)
 
-# get shotest with your ports
+# get shortest with your ports
 route_with_my_ntw = sr.searoute(origin, destination, P = myP, M = myM )
 
 ```
 ### Nodes and Edges
 #### Nodes 
-A node (or vertex) is a fondamantal unit of which the graphs Ports and Marnet are formed.
+A node (or vertex) is a fundamental unit of which the graphs Ports and Marnet are formed.
 
-In searoute, a node is represend by it's id as a ``tuple`` of lon,lat, and it's attributes:
+In searoute, a node is represented by it's id as a ``tuple`` of lon,lat, and it's attributes:
 - `x` : float ; required
 - `y` : float ; required
 - `t` : bool ; optional. default is `False`, will be used for filtering ports with `terminals`.
@@ -185,6 +185,7 @@ GeoJson Feature
 ## Credits
 
 - [NetworkX](https://networkx.org/), a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks.
-- [turfpy](https://github.com/omanges/turfpy), a Python library for performing geospatial data analysis which reimplements turf.js.
-- [OSMnx](https://github.com/gboeing/osmnx), for geo-spacial networks.
+- [GeoJson](https://github.com/jazzband/geojson), a python package for GeoJSON
+- [turfpy](https://github.com/omanges/turfpy), a Python library for performing geo-spatial data analysis which reimplements turf.js. (up to version `searoute 1.1.0`)
+- [OSMnx](https://github.com/gboeing/osmnx), for geo-spacial networks. (up to version `searoute 1.1.0`)
 - Eurostat's [Searoute Java library](https://github.com/eurostat/searoute)
