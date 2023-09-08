@@ -1,6 +1,6 @@
 
 from .classes import ports, marnet, passages
-from .utils import get_duration, distance_length, from_nodes_edges_set
+from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring
 from geojson import Feature, LineString
 
 from .data.ports_dict import edge_list as port_e, node_list as port_n
@@ -83,41 +83,27 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     # if origin or destination is not presnet in M, searches from the closest one
     shortest_route_by_distance = M.shortest_path(o_origin, o_destination)
 
-    ls = []
-    previousX = None
-    for i in shortest_route_by_distance:
-        node = M.nodes[i]
-        nowX = node['x']
-
-        if previousX:
-            if previousX-nowX < -180:
-                nowX = -180-(180-nowX)
-            elif previousX-nowX > 180:
-                nowX = nowX+360
-        ls.append((nowX, node['y']))
-        previousX = nowX
+    if shortest_route_by_distance is None:
+        shortest_route_by_distance = []
+        
+    if include_ports and shortest_route_by_distance:
+        shortest_route_by_distance.insert(0, origin )
+        shortest_route_by_distance.append(destination )
 
     if append_orig_dest:
-
-        if len(ls) == 1:
-            # to avoid strange connections remove, eventually non-ocean connections with one coord, remove it to add origin and dest
-            ls = []
-        # add origin at fist position of the linestring
-        ls.insert(0, origin)
-
-        # add destination at the last position of the linestring
-        nowX = destination[0]
-        if previousX:
-            if previousX-nowX < -180:
-                nowX = -180-(180-nowX)
-            elif previousX-nowX > 180:
-                nowX = nowX+360
-        ls.append((nowX, destination[1]))
-
         if (origin != o_origin):
-            ls.insert(0, o_origin)
+            shortest_route_by_distance.insert(0, o_origin)
         if (destination != o_destination):
-            ls.append(o_destination)
+            shortest_route_by_distance.append(o_destination)
+
+    ls = []
+    previous = None
+
+    for i in shortest_route_by_distance:
+        now = i
+        fixed_coords = normalize_linestring(previous, now)
+        ls.append(fixed_coords)
+        previous = fixed_coords
 
     total_length = distance_length(ls, units=units)
 
