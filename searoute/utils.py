@@ -387,3 +387,52 @@ def normalize_linestring(prev, now):
             now_x = now_x + 360
     
     return (now_x, now_y)
+
+
+def validate_lon_lat(coord):
+    """
+    Validate a (lon, lat) coordinate.
+
+    Parameters
+    ----------
+    coord (tuple or list): A tuple or list containing two elements, representing longitude and latitude.
+
+    Raises
+    ------
+    ValueError: If the input format is incorrect or if the longitude and latitude values are invalid.
+
+    Returns
+    -------
+    None: The function does not return anything. It either validates successfully or raises an exception.
+    """
+
+    # Check if the input is a tuple or list with two elements
+    if not isinstance(coord, (tuple, list)) or len(coord) != 2:
+        raise ValueError("Invalid input format. Must be a tuple or list with two elements as (lan,lon).")
+
+    lon, lat = coord
+
+    # Latitude should be between -90 and 90 degrees
+    # Longitude can be any value
+    if not (-90 <= lat <= 90) or not isinstance(lon, (int, float)):
+        raise ValueError("Invalid longitude and/or latitude.")
+    
+
+def normalize_longitude(longitude:float):
+    """
+    Normalize a longitude value to the range of -180 to 180 degrees.
+
+    Parameters:
+    - longitude (float): The input longitude value.
+
+    Returns:
+    - float: The normalized longitude value within the range of -180 to 180 degrees.
+
+    Examples:
+    normalize_longitude(200)
+    >>> -160.0
+
+    normalize_longitude(-270)
+    >>> 90.0
+    """
+    return (longitude % 360 + 540) % 360 - 180
