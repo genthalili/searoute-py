@@ -1,6 +1,6 @@
 
 from .classes import ports, marnet, passages
-from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring
+from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring, validate_lon_lat
 from geojson import Feature, LineString
 
 from .data.ports_dict import edge_list as port_e, node_list as port_n
@@ -36,11 +36,11 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details
     """
 
-    if not origin or not all(origin):
-        raise Exception('Origin/Destination must not be empty or None')
+    # Validate origin input
+    validate_lon_lat(origin)
+    # Validate destination input
+    validate_lon_lat(destination)
 
-    if not destination or not all(destination):
-        raise Exception('Origin/Destination must not be empty or None')
 
     if P is None:
         raise Exception('Ports network must not be None')
