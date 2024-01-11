@@ -168,16 +168,16 @@ def find_lowest_key(data, *keys):
 
 def __default_filter(u, *something):
     """
-    A defaul filter is a lazy filter and will return allwasy True
+    A default filter is a lazy filter and will return always True
 
     Parameters
     ----------
     u : a node, not used
     something : arguments of something, not used
 
-    Returnes
+    Returns
     --------
-    Allways `True`
+    Always `True`
 
 
     """

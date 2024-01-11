@@ -12,13 +12,13 @@ classifiers = [
     'Intended Audience :: Science/Research',
     'Intended Audience :: Telecommunications Industry',
     'Operating System :: OS Independent',
-    'License :: OSI Approved :: MIT License',
+    'License :: OSI Approved :: Apache License 2.0',
     'Programming Language :: Python :: 3'
 ]
 
 setup(
     name='searoute',
-    version='1.2.3',
+    version='1.3.0',
     description='A python package for generating the shortest sea route between two points on Earth.',
     long_description=open('README.md').read() + '\n\n' +
     open('CHANGELOG.txt').read(),
@@ -26,7 +26,7 @@ setup(
     url='',
     author='Gent Halili',
     author_email='genthalili@users.noreply.github.com',
-    license='MIT',
+    license='Apache License 2.0',
     classifiers=classifiers,
     keywords='searoute map sea route ocean ports',
     packages=find_packages(),
