@@ -29,7 +29,11 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     append_orig_dest : add origin and dest geo-points in the LineString of the route, default is False
     restrictions : an list of restrictions of paths to avoid, use as per your specific need; default restricted ['northwest']; possible passages: babalmandab, bosporus, gibraltar, suez, panama, ormuz, northwest
     include_ports : boolean to include closest port close to origin or destinations
-    port_params : object ; only_terminals: boolean, country_pol: country iso code for port of load, country_pod: country iso code for port of discharge
+    port_params : object ; 
+        - only_terminals: boolean, default False
+        - country_pol: country iso code for port of load
+        - country_pod: country iso code for port of discharge
+        - country_restricted :  boolean, default False ; if True it will consider `country_pod` as a parameter to match with `to_cty` in ports list
     
     Returns
     -------
@@ -64,13 +68,19 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         only_terminals = port_params.get('only_terminals', False)
         country_pol = port_params.get('country_pol', None)
         country_pod = port_params.get('country_pod', None)
+        country_restricted = port_params.get('country_restricted', False)
+        country_restricted_key =  'to_cty'
+        to_cty = country_pod if country_restricted else None
+       
 
         # set origin as closest port
         closestPortOrigin = P.query(
-            terminals=only_terminals, cty=country_pol).kdtree.query(origin)
+            terminals=only_terminals, cty=country_pol, to_cty=to_cty).kdtree.query(origin)
         if closestPortOrigin:
             origin = closestPortOrigin
             port_origin = P.nodes[origin]
+            if country_restricted_key in port_origin:
+                del port_origin[country_restricted_key]
 
         # set destination as closest port
         closestPortDest = P.query(
@@ -78,6 +88,8 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         if closestPortDest:
             destination = closestPortDest
             port_dest = P.nodes[destination]
+            if country_restricted_key in port_dest:
+                del port_dest[country_restricted_key]
     
     # Get shortest route from the Marnet network 
     # if origin or destination is not presnet in M, searches from the closest one

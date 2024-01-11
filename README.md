@@ -177,6 +177,7 @@ Optional. If `include_ports` is `True` then you can set port configuration for a
 - `only_terminals` to include only terminal ports, default `False`
 - `country_pol` country iso code (2 letters) for closest port of load, default `None`. When not set or not found, closest port is based on geography.
 - `country_pod` country iso code (2 letters) for closest port of discharge, default `None`. When not set or not found, closest port is based on geography.
+- `country_restricted` to filter out ports that have registered an argument key `to_cty`(a list) which indicates an existing route to the country same as in `country_pod`; default `False`
 
 default is `{}`
 

@@ -5,13 +5,14 @@ from .kdtree import KDTree
 
 
 class Ports(nx.Graph):
-    """Base class for Ports network is an undirected graph. 
+    """
+    Base class for Ports network is an undirected graph. 
 
-    A Ports grpah stores nodes and edges with optional data, or attributes.
+    A Ports graph stores nodes and edges with optional data, or attributes.
 
     Nodes are identified by an id of tuple representing a spacial location
     with (lon, lat) and it's attributes if applied.
-    They form portes located around the world.
+    They form ports located around the world.
 
 
     """
@@ -43,7 +44,7 @@ class Ports(nx.Graph):
 
         return subg
 
-    def query(self, terminals: bool = True, cty: str = None):
+    def query(self, terminals: bool = True, cty: str = None, to_cty: str = None):
         """
         Query the Port graph
 
@@ -54,6 +55,9 @@ class Ports(nx.Graph):
             filters out only terminal marked ports
         cty : str, default None
             filters out ports in given country code (must be an ISO country code with 2 letters uppercase)
+        to_cty: str, default None
+            filters out ports that have to_country the port of discharge (country_pod)
+            must be an ISO country code with 2 letters uppercase
 
         Returns
         -------
@@ -63,16 +67,24 @@ class Ports(nx.Graph):
         if not terminals and not cty:
             return self
 
-        def cty_filter(port, cty):
+        def cty_filter(data, cty):
             if not cty:
                 return True
             else:
-                return port == cty
+                return data.get('port')[:2] == cty
+            
+        def cty_to_filter(data, to_cty):
+            if not to_cty:
+                return True
+            else:
+                return to_cty in (data.get('to_cty') or [])
 
         terminal_filter = True if terminals else None
 
-        filtered_nodes = [n for n, data in self.nodes(data=True) if data.get(
-            't') == terminal_filter and cty_filter(data.get('port')[:2], cty)]
+        filtered_nodes = [n for n, data in self.nodes(data=True) if data.get('t') == terminal_filter
+            and cty_filter(data, cty)
+            and cty_to_filter(data, to_cty)
+            ]
         
         if not filtered_nodes or len(filtered_nodes)==0:
             # filter without cty as cty seems to not have ports :/
