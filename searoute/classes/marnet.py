@@ -81,23 +81,23 @@ class Marnet(nx.Graph):
 
         return subg
 
-    def query(self, apply_restirctions=True, restrictions=None):
+    def query(self, apply_restrictions=True, restrictions=None):
         """
         Query the Marnet graph
 
         Parameters
         ----------
-        apply_restirctions : boolean, default True
+        apply_restrictions : boolean, default True
             Filters out edges with passages out of restriction list
         restrictions : list of passages to be restricted
-            A list of str, by default is None which means the restionctions of the Marnet
+            A list of str, by default is None which means the restrictions of the Marnet
 
         Returns
         -------
         A subgraph of Marnet filtered
         """
 
-        if apply_restirctions:
+        if apply_restrictions:
             restrictions_ = restrictions or self.restrictions
             filtered_edges = [(u, v) for u, v, data in self.edges(
                 data=True) if data.get('passage', None) not in restrictions_]
@@ -138,7 +138,7 @@ class Marnet(nx.Graph):
 
     def shortest_path(self, origin, destination):
         """
-        Shortest Path between the orifin and the destination.
+        Shortest Path between the origin and the destination.
         Dijkstra algorithm is used to perform the calculation.
 
         Parameters
@@ -150,7 +150,7 @@ class Marnet(nx.Graph):
 
         Returns
         -------
-        A list of nodes building the shortest pasth
+        A list of nodes building the shortest path
         
         """
         origin_node = self.kdtree.query(origin)

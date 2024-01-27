@@ -166,7 +166,7 @@ Optional. If the origin and destination should be appended to the LineString, de
 
 `restrictions`    
 Optional. List of passages to be restricted during calculations.
-Possible values : `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`;
+Possible values : `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`, `malacca`, `sunda`;
 default is `['northwest']`
 
 `include_ports`    
