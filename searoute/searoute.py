@@ -110,9 +110,15 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
 
     ls = []
     previous = None
+    traversed_passages = []
 
     for i in shortest_route_by_distance:
         now = i
+        edge = M.get_edge_data(previous, now)
+        if edge:
+            passage = edge.get("passage", None)
+            if passage:
+                traversed_passages.append(passage)
         fixed_coords = normalize_linestring(previous, now)
         ls.append(fixed_coords)
         previous = fixed_coords
@@ -122,7 +128,8 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     duration = get_duration(speed_knot, total_length, units)
 
     feature = Feature(geometry=LineString(ls), properties={
-                      'length': total_length, 'units': units, 'duration_hours': duration})
+                      'length': total_length, 'units': units, 'duration_hours': duration,
+                      'traversed_passages': list(set(traversed_passages)),})
 
     if include_ports and port_origin and port_dest:
         feature.properties['port_origin'] = port_origin
