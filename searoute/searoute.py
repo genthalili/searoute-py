@@ -7,14 +7,10 @@ from functools import cache
 
 def setup_P():
     from .data.ports_dict import edge_list as port_e, node_list as port_n
-    print("setting up P")
-
     return from_nodes_edges_set(ports.Ports(), port_n, port_e)
 
 def setup_M():
     from .data.marnet_dict import edge_list as marnet_e, node_list as marnet_n
-    print("setting up M")
-
     return from_nodes_edges_set(marnet.Marnet(), marnet_n, marnet_e)
 
 
