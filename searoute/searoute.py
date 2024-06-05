@@ -3,8 +3,6 @@ from .classes import ports, marnet, passages
 from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring, validate_lon_lat
 from geojson import Feature, LineString
 
-from functools import cache
-
 def setup_P():
     from .data.ports_dict import edge_list as port_e, node_list as port_n
     return from_nodes_edges_set(ports.Ports(), port_n, port_e)
