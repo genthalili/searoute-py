@@ -3,17 +3,24 @@ from .classes import ports, marnet, passages
 from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring, validate_lon_lat
 from geojson import Feature, LineString
 
-from .data.ports_dict import edge_list as port_e, node_list as port_n
-from .data.marnet_dict import edge_list as marnet_e, node_list as marnet_n
+from functools import cache
+from copy import copy
+
+@cache
+def setup_P():
+    from .data.ports_dict import edge_list as port_e, node_list as port_n
+    return from_nodes_edges_set(ports.Ports(), port_n, port_e)
+
+@cache
+def setup_M():
+    from .data.marnet_dict import edge_list as marnet_e, node_list as marnet_n
+    return from_nodes_edges_set(marnet.Marnet(), marnet_n, marnet_e)
 
 
-P = from_nodes_edges_set(ports.Ports(), port_n, port_e)
-M = from_nodes_edges_set(marnet.Marnet(), marnet_n, marnet_e)
-
-del port_e, port_n, marnet_e, marnet_n
 
 
-def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=M, P:ports.Ports=P):
+
+def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=None, P:ports.Ports=None):
     """
     Calculates the shortest sea route between two points on Earth.
 
@@ -40,6 +47,10 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details
     """
 
+    if M is None:
+        M = copy(setup_M())
+    if P is None:
+        P = copy(setup_P())
     # Validate origin input
     validate_lon_lat(origin)
     # Validate destination input
