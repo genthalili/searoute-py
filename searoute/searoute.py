@@ -50,9 +50,9 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     """
 
     if M is None:
-        M = setup_M()
+        M = copy(setup_M())
     if P is None:
-        P = setup_P()
+        P = copy(setup_P())
     # Validate origin input
     validate_lon_lat(origin)
     # Validate destination input
