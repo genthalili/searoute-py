@@ -40,8 +40,11 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         - only_terminals: boolean, default False
         - country_pol: country iso code for port of load
         - country_pod: country iso code for port of discharge
-        - country_restricted :  boolean, default False ; if True it will consider `country_pod` as a parameter to match with `to_cty` in ports list
-    
+        - country_restricted :  boolean or 'strict', default False ; if True it will consider `country_pod` as a parameter to match with `to_cty` in ports list
+                                if set to 'strict' then if will force ALL queries to match
+       - ports_in_areas : a FeatureCollection containing areas with preferred ports, created of AreaFeature, use AreaFeature.create([...]). The previous configurations will be ignored.
+                            If there are many ports then the result will be a list of GeoJson Features, instead of an object of GeoJson Feature.
+                            Preferred ports with share = 0 will be ignored.
     Returns
     -------
     a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details
@@ -79,28 +82,34 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         only_terminals = port_params.get('only_terminals', False)
         country_pol = port_params.get('country_pol', None)
         country_pod = port_params.get('country_pod', None)
+
         country_restricted = port_params.get('country_restricted', False)
         country_restricted_key =  'to_cty'
+        country_restricted_strict = False
+
+        if country_restricted == 'strict':
+            country_restricted_strict = True
+            country_restricted = True
+        
         to_cty = country_pod if country_restricted else None
        
-
         # set origin as closest port
         closestPortOrigin = P.query(
-            terminals=only_terminals, cty=country_pol, to_cty=to_cty).kdtree.query(origin)
+            terminals=only_terminals, cty=country_pol, to_cty=to_cty, strict=country_restricted_strict).kdtree.query(origin)
         if closestPortOrigin:
             origin = closestPortOrigin
-            port_origin = P.nodes[origin]
+            port_origin = P.nodes[origin].copy()
             if country_restricted_key in port_origin:
-                del port_origin[country_restricted_key]
+                port_origin.pop(country_restricted_key)
 
         # set destination as closest port
         closestPortDest = P.query(
             terminals=only_terminals, cty=country_pod).kdtree.query(destination)
         if closestPortDest:
             destination = closestPortDest
-            port_dest = P.nodes[destination]
+            port_dest = P.nodes[destination].copy()
             if country_restricted_key in port_dest:
-                del port_dest[country_restricted_key]
+                port_dest.pop(country_restricted_key)
     
     # Get shortest route from the Marnet network 
     # if origin or destination is not present in M, searches from the closest one

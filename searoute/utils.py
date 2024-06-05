@@ -107,7 +107,7 @@ def distance(coordinates1, coordinates2, units: str = "km"):
     return b * avg_earth_radius_km * conversions[units]
 
 
-def distance_length(line: [tuple], units: str = "km"):
+def distance_length(line: list[tuple], units: str = "km"):
     """
     Length of a line of coordinates 
 
@@ -436,3 +436,30 @@ def normalize_longitude(longitude:float):
     >>> 90.0
     """
     return (longitude % 360 + 540) % 360 - 180
+
+
+def pnpoly(nvert: int, vertx: list, verty: list, testx :float, testy: float) ->bool:
+    """
+    Determines if a point is inside a polygon.
+    document : https://wrfranklin.org/Research/Short_Notes/pnpoly.html
+    Copyright (c) 1970-2003, Wm. Randolph Franklin
+
+    Parameters:
+    ==========
+    - nvert (int): Number of vertices in the polygon. It's not necessary to repeat the first vertex at the end.
+    - vertx (list or array of float): Array containing the x-coordinates of the polygon's vertices.
+    - verty (list or array of float): Array containing the y-coordinates of the polygon's vertices.
+    - testx (float): X-coordinate of the test point.
+    - testy (float): Y-coordinate of the test point.
+
+    Returns:
+    =======
+    bool: True if the test point is inside the polygon; False otherwise.
+    """
+    c = False
+    for i in range(nvert):
+        j = nvert - 1 if i == 0 else i - 1
+        if ((verty[i] > testy) != (verty[j] > testy)) and \
+                (testx < (vertx[j] - vertx[i]) * (testy - verty[i]) / (verty[j] - verty[i]) + vertx[i]):
+            c = not c
+    return c

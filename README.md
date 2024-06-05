@@ -125,14 +125,6 @@ returns :
   "properties": {
     "duration_hours": 461.88474412693756,
     "length": 20529.85310695412,
-    "port_dest": {
-      "cty": "China",
-      "name": "Tianjin",
-      "port": "CNTSN",
-      "t": 1,
-      "x": 117.744852,
-      "y": 38.986802
-    },
     "port_origin": {
       "cty": "France",
       "name": "Le Havre",
@@ -141,11 +133,51 @@ returns :
       "x": 0.107054,
       "y": 49.485998
     },
+    "port_dest": {
+      "cty": "China",
+      "name": "Tianjin",
+      "port": "CNTSN",
+      "t": 1,
+      "x": 117.744852,
+      "y": 38.986802
+    },
     "units": "km"
   },
   "type": "Feature"
 }
 ~~~
+
+## Preferred Ports
+It's possible to select referred ports which can be configured with one or a `list` of `AreaFeature`:
+
+Start by creating/referencing preferred ports using `PortProps` object which should contain a `port_id`, `share` (could be any positive number) and `props` corresponding to attributes of a port. 
+```py
+# your preferred ports
+port_one = PortProps('MY_PORT_ID', 2, {'x':1, 'y':2})
+port_two = PortProps('USNYC', 1)
+```
+Initiate a `AreaFeature` with its coords and a name, as well as `list` of `preferred_ports` (could be a `list`, `str`, or `PortProps`)
+```py
+# initiate an AreaFeature
+area_one = AreaFeature(coordinates=[[[0,0], [0,10],[0,20], [20, 20], [0, 0]]], name= 'Special_Name', preferred_ports=[port_one, port_two])
+
+# create other AreaFeature
+area_two = AreaFeature(...)
+```
+Note that the smallest AreaFeature which contains the point will be selected.
+
+Finally, call the function which will return a tuple of 3 values, or 4 values when `include_area_name` is set to `True`:
+```py
+# myPorts is the instance of Port, by default is sr.P
+origin = (11, 12)
+pref_ports = myPorts.get_preferred_ports(*origin, AreaFeature.create([area_one, area_two]), top=2, include_area_name = True)
+```
+
+### Usage in main function
+````py
+areas = AreaFeature.create([area_one, area_two])
+sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
+````
 
 ## Parameters
 
@@ -166,7 +198,7 @@ Optional. If the origin and destination should be appended to the LineString, de
 
 `restrictions`    
 Optional. List of passages to be restricted during calculations.
-Possible values : `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`, `malacca`, `sunda`;
+Possible values : `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`, `malacca`, `sunda`, `chili`, `south_africa`;
 default is `['northwest']`
 
 `include_ports`    
@@ -178,11 +210,14 @@ Optional. If `include_ports` is `True` then you can set port configuration for a
 - `country_pol` country iso code (2 letters) for closest port of load, default `None`. When not set or not found, closest port is based on geography.
 - `country_pod` country iso code (2 letters) for closest port of discharge, default `None`. When not set or not found, closest port is based on geography.
 - `country_restricted` to filter out ports that have registered an argument key `to_cty`(a list) which indicates an existing route to the country same as in `country_pod`; default `False`
-
+- `ports_in_areas` : a FeatureCollection containing areas with preferred ports, created of AreaFeature, use AreaFeature.create([...]). The previous configurations will be ignored.
+If there are many ports then the result will be a list of GeoJson Features, instead of an object of GeoJson Feature.
+Preferred ports with share = 0 will be ignored.
+    
 default is `{}`
 
 ### Returns
-GeoJson Feature
+GeoJson Feature or list[GeoJson Feature] if many routes configured in `port_params`.
 ## Credits
 
 - [NetworkX](https://networkx.org/), a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks.

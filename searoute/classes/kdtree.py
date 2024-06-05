@@ -87,10 +87,12 @@ class KDTree:
         return next_best
 
     def query(self, point):
+        if point is None:
+            raise Exception('There is no nodes in the Graph')
         try:
             best = self.root.point
         except:
-            raise Exception('Ports/Marnet network was not inititated, initiate using searoute.utils.from_nodes_edges_set function')
+            raise Exception('Ports/Marnet network was not initiated, initiate using searoute.utils.from_nodes_edges_set function')
         return self._query(point, self.root, 0, best)
 
     def _distance(self, p1, p2):

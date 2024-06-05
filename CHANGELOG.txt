@@ -74,3 +74,12 @@ Change Log
 1.3.1 (27/01/2024)
 ------------------
 - Enriched network with additional passages
+
+
+1.4.0 (03/01/2024)
+------------------
+- Enriched network with additional passages : chili and south_africa (#27)
+- Adjusted logic of port selection (#28)
+- Add feature to suggest preferred port of load and port of discharge (#29)
+- Fixed del property `to_cty` in main function (#30)
+- Created unit tests

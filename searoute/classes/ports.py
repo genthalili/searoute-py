@@ -2,12 +2,14 @@ import networkx as nx
 
 from ..utils import load_from_geojson
 from .kdtree import KDTree
+from . import area_feature
+from geojson import FeatureCollection
 
 
 class Ports(nx.Graph):
     """
     Base class for Ports network is an undirected graph. 
-
+s
     A Ports graph stores nodes and edges with optional data, or attributes.
 
     Nodes are identified by an id of tuple representing a spacial location
@@ -37,6 +39,13 @@ class Ports(nx.Graph):
         self.kdtree.add_point(node)
         super().add_node(node, **attr)
 
+
+    def __copy__(self):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        return result
+
     def subgraph(self, nodes):
 
         subg = super().subgraph(nodes)
@@ -44,7 +53,7 @@ class Ports(nx.Graph):
 
         return subg
 
-    def query(self, terminals: bool = True, cty: str = None, to_cty: str = None):
+    def query(self, terminals: bool = True, cty: str = None, to_cty: str = None, strict = False):
         """
         Query the Port graph
 
@@ -64,7 +73,7 @@ class Ports(nx.Graph):
         A subgraph of Ports filtered
         """
 
-        if not terminals and not cty:
+        if not terminals and not cty and not to_cty:
             return self
 
         def cty_filter(data, cty):
@@ -81,17 +90,40 @@ class Ports(nx.Graph):
 
         terminal_filter = True if terminals else None
 
-        filtered_nodes = [n for n, data in self.nodes(data=True) if data.get('t') == terminal_filter
-            and cty_filter(data, cty)
-            and cty_to_filter(data, to_cty)
-            ]
-        
-        if not filtered_nodes or len(filtered_nodes)==0:
-            # filter without cty as cty seems to not have ports :/
-            filtered_nodes = [n for n, data in self.nodes(data=True) if data.get(
-            't') == terminal_filter]
-        subgraph = self.subgraph(filtered_nodes)
-        return subgraph
+        if strict:
+            strict_filter = [n for n, data in self.nodes(data=True) 
+             if data.get('t') == terminal_filter and cty_filter(data, cty) and cty_to_filter(data, to_cty)]
+            
+            if len(strict_filter)<1:
+                raise KeyError(f'There is no ports for your query terminals:{terminals}, from country:{cty}, to country:{to_cty}, strict:{strict}')
+            
+            return self.subgraph(strict_filter)
+
+        # add filter terminals
+        filtered_nodes = [(n, data) for n, data in self.nodes(data=True) if data.get('t') == terminal_filter]
+        filtered_nodes_prev = None
+
+        if len(filtered_nodes)>0:
+            # add filter "from county"
+            filtered_nodes_prev = filtered_nodes
+            filtered_nodes = [(n, data) for n, data in filtered_nodes_prev if cty_filter(data, cty)]
+
+        if len(filtered_nodes)>0:
+            # add filter "to county"
+            filtered_nodes_prev = filtered_nodes
+            filtered_nodes = [(n, data) for n, data in filtered_nodes_prev if cty_to_filter(data, to_cty)]
+
+        # finally bring all 
+        if len(filtered_nodes)==0:
+            filtered_nodes = self.nodes(data=True)
+            
+
+        if len(filtered_nodes)>0:
+            return self.subgraph([n for n,_ in filtered_nodes])
+        else:
+            raise KeyError(f'There is no ports for your query terminals:{terminals}, from country:{cty}, to country:{to_cty}, strict:{strict}')
+
+       
 
     def filter_only_terminals(self, u, v, edge_data):
         return True if edge_data.get('t', 0) == 1 else False
@@ -125,3 +157,56 @@ class Ports(nx.Graph):
             self.kdtree = KDTree(nodes)
         else:
             self.kdtree = KDTree(self._node)
+
+    
+
+    def get_preferred_ports(self, x,y, ft:FeatureCollection, top = None, include_area_name = False):
+        preferred_ports = []
+        
+        s_area = None
+        s_area_size = float('inf')
+        s_area_name = None
+        
+        _sum = 0
+        for feature in ft.features:
+            if not isinstance(feature, area_feature.AreaFeature):
+                continue
+            
+            if feature.contains(x,y):
+                prop = feature.properties
+                
+                name = prop.get('name', None)
+                area = prop.get('area', float("inf"))
+
+                if s_area_size >= area:
+                    s_area_size = area
+                    s_area = prop
+                    s_area_name = name
+                
+        preferred_ports = s_area.get('preferred_ports', [])
+        
+        for p in preferred_ports:
+            _sum+=p.share
+
+        def _update_props(port_id, props):
+            # update props
+            if props is None or props == {}:
+                try:
+                    res = [y for x,y in self.nodes(data=True) if y['port']==port_id]
+                    if len(res)>0:
+                        return res[0] # first values
+                except:
+                    pass
+            return props 
+
+        if include_area_name:
+            sorted_by_second = sorted([(a, b/max(_sum, 1), _update_props(a, c), s_area_name) for a,b,c in preferred_ports], key=lambda tup: tup[1], reverse=True)
+        else:
+            sorted_by_second = sorted([(a, b/max(_sum, 1), _update_props(a, c)) for a,b,c in preferred_ports], key=lambda tup: tup[1], reverse=True)
+        
+        if top:
+            return sorted_by_second[:top]
+        else:
+            return sorted_by_second
+
+    
