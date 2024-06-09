@@ -20,7 +20,7 @@ def setup_M():
 
 
 
-def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=None, P:ports.Ports=None):
+def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=None, P:ports.Ports=None, return_passages:bool = False):
     """
     Calculates the shortest sea route between two points on Earth.
 
@@ -42,12 +42,14 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         - country_pod: country iso code for port of discharge
         - country_restricted :  boolean or 'strict', default False ; if True it will consider `country_pod` as a parameter to match with `to_cty` in ports list
                                 if set to 'strict' then if will force ALL queries to match
-       - ports_in_areas : a FeatureCollection containing areas with preferred ports, created of AreaFeature, use AreaFeature.create([...]). The previous configurations will be ignored.
+        - ports_in_areas : a FeatureCollection containing areas with preferred ports, created of AreaFeature, use AreaFeature.create([...]). The previous configurations will be ignored.
                             If there are many ports then the result will be a list of GeoJson Features, instead of an object of GeoJson Feature.
                             Preferred ports with share = 0 will be ignored.
+    return_passages : boolean to return traversed passages (default is `False`)
+
     Returns
     -------
-    a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details
+    a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details, others
     """
 
     if M is None:
@@ -147,5 +149,8 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     if include_ports and port_origin and port_dest:
         feature.properties['port_origin'] = port_origin
         feature.properties['port_dest'] = port_dest
+
+    if return_passages:
+        feature.properties['traversed_passages'] = passages.Passage.filter_valid_passages(M.traversed_passages)
 
     return feature

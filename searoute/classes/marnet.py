@@ -22,6 +22,7 @@ class Marnet(nx.Graph):
         self.graph['crs'] = DEFAULT_CRF  # CRS attribute for the graph
         self.restrictions = [Passage.northwest]
         self.kdtree = KDTree()
+        self.traversed_passages = []
 
     def add_node(self, node, **attr):
         if not isinstance(node, tuple):
@@ -134,7 +135,17 @@ class Marnet(nx.Graph):
 
     # Get the shortest route by distance
     def __custom_w(self, u, v, data):
-        return data.get('weight') if data.get('passage') not in self.restrictions else float('inf')
+        # store in param the passage value
+        psg = data.get('passage')
+        # if not None append into the list
+        if psg:
+            self.traversed_passages.append(psg)
+
+        # treat the weight, if restricted make the weight inf, otherwise real weight
+        if psg not in self.restrictions:
+            return data.get('weight')
+        else:
+            return float('inf')
 
     def shortest_path(self, origin, destination):
         """
