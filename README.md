@@ -213,6 +213,7 @@ Optional. If `include_ports` is `True` then you can set port configuration for a
 - `ports_in_areas` : a FeatureCollection containing areas with preferred ports, created of AreaFeature, use AreaFeature.create([...]). The previous configurations will be ignored.
 If there are many ports then the result will be a list of GeoJson Features, instead of an object of GeoJson Feature.
 Preferred ports with share = 0 will be ignored.
+- `return_passages` : boolean to return traversed passages (default is `False`)
     
 default is `{}`
 
