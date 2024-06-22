@@ -84,3 +84,9 @@ Change Log
 - Fixed del property `to_cty` in main function (#30)
 - Created unit tests
 - return passages traversed by the path (#34)
+
+1.4.1 (22/06/2024)
+------------------
+- Fixed support python 3.7 3.8 (issue #36)
+- Fixed bug in `return_passages` (issue #35)
+- Added tests for `return_passages`
