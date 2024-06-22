@@ -388,6 +388,47 @@ def normalize_linestring(prev, now):
     
     return (now_x, now_y)
 
+def process_route(shortest_route_by_distance, M, return_passages=False):
+    """
+    Process the shortest route by distance, normalizing the coordinates and
+    optionally extracting traversed passages.
+
+    Args:
+        shortest_route_by_distance (list): A list of nodes representing the shortest route.
+        M (Graph): The graph object containing the edges and their attributes.
+        return_passages (bool): A flag to determine whether to return traversed passages.
+
+    Returns:
+        tuple: A tuple containing:
+            - ls (list): A list of normalized coordinate linestrings.
+            - traversed_passages (list, optional): A list of passages traversed in the route if return_passages is True.
+    """
+    ls = []
+    previous = None
+    traversed_passages = []
+
+    if return_passages:    
+        for i in shortest_route_by_distance:
+            now = i
+            edge = M.get_edge_data(previous, now)
+            if edge:
+                traversed_passages.append(edge.get("passage", None))
+                
+            fixed_coords = normalize_linestring(previous, now)
+            ls.append(fixed_coords)
+            previous = fixed_coords
+
+        return ls, traversed_passages
+    else:
+        for i in shortest_route_by_distance:
+            now = i   
+            fixed_coords = normalize_linestring(previous, now)
+            ls.append(fixed_coords)
+            previous = fixed_coords
+
+        return ls, None
+
+
 
 def validate_lon_lat(coord):
     """

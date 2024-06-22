@@ -1,6 +1,6 @@
 
 from .classes import ports, marnet, passages
-from .utils import get_duration, distance_length, from_nodes_edges_set, normalize_linestring, validate_lon_lat
+from .utils import get_duration, distance_length, from_nodes_edges_set, process_route, validate_lon_lat
 from geojson import Feature, LineString
 
 from functools import cache
@@ -130,14 +130,24 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         if (destination != o_destination):
             shortest_route_by_distance.append(o_destination)
 
+    '''
     ls = []
     previous = None
+    traversed_passages = []
 
     for i in shortest_route_by_distance:
         now = i
+
+        edge = M.get_edge_data(previous, now)
+        if edge:
+            traversed_passages.append(edge.get("passage", None))
+            
         fixed_coords = normalize_linestring(previous, now)
         ls.append(fixed_coords)
         previous = fixed_coords
+
+    '''
+    ls, traversed_passages = process_route(shortest_route_by_distance, M, return_passages)
 
     total_length = distance_length(ls, units=units)
 
@@ -151,6 +161,6 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         feature.properties['port_dest'] = port_dest
 
     if return_passages:
-        feature.properties['traversed_passages'] = passages.Passage.filter_valid_passages(M.traversed_passages)
+        feature.properties['traversed_passages'] = traversed_passages #passages.Passage.filter_valid_passages(M.traversed_passages)
 
     return feature

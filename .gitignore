@@ -8,3 +8,4 @@ test*.py
 *.csv
 .DS_Store
 docs/
+.venv
