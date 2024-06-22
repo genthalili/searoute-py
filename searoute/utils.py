@@ -107,7 +107,7 @@ def distance(coordinates1, coordinates2, units: str = "km"):
     return b * avg_earth_radius_km * conversions[units]
 
 
-def distance_length(line: list[tuple], units: str = "km"):
+def distance_length(line: list, units: str = "km"):
     """
     Length of a line of coordinates 
 

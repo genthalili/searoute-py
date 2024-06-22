@@ -1,6 +1,7 @@
 dist/
 *.egg-info/
 searoute/__pychache__
+.pytest_cache
 *__pychache__*
 *.pyc
 *.ipynb*
@@ -9,3 +10,6 @@ test*.py
 .DS_Store
 docs/
 .venv
+.tox
+searoute/__pycache__/__init__.cpython-310.pyc
+searoute/__pycache__/searoute.cpython-310.pyc

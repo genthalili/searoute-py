@@ -3,20 +3,18 @@ from .classes import ports, marnet, passages
 from .utils import get_duration, distance_length, from_nodes_edges_set, process_route, validate_lon_lat
 from geojson import Feature, LineString
 
-from functools import cache
+from functools import lru_cache
 from copy import copy
 
-@cache
+@lru_cache(maxsize=None)
 def setup_P():
     from .data.ports_dict import edge_list as port_e, node_list as port_n
     return from_nodes_edges_set(ports.Ports(), port_n, port_e)
 
-@cache
+@lru_cache(maxsize=None)
 def setup_M():
     from .data.marnet_dict import edge_list as marnet_e, node_list as marnet_n
     return from_nodes_edges_set(marnet.Marnet(), marnet_n, marnet_e)
-
-
 
 
 
@@ -161,6 +159,6 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         feature.properties['port_dest'] = port_dest
 
     if return_passages:
-        feature.properties['traversed_passages'] = traversed_passages #passages.Passage.filter_valid_passages(M.traversed_passages)
+        feature.properties['traversed_passages'] = passages.Passage.filter_valid_passages(traversed_passages)
 
     return feature

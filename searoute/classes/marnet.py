@@ -22,7 +22,6 @@ class Marnet(nx.Graph):
         self.graph['crs'] = DEFAULT_CRF  # CRS attribute for the graph
         self.restrictions = [Passage.northwest]
         self.kdtree = KDTree()
-        self.traversed_passages = []
 
     def add_node(self, node, **attr):
         if not isinstance(node, tuple):
