@@ -18,7 +18,7 @@ classifiers = [
 
 setup(
     name='searoute',
-    version='1.4.1',
+    version='1.4.2',
     description='A python package for generating the shortest sea route between two points on Earth.',
     long_description=open('README.md').read() + '\n\n' +
     open('CHANGELOG.txt').read(),
