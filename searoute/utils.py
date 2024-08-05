@@ -405,18 +405,21 @@ def process_route(shortest_route_by_distance, M, return_passages=False):
     """
     ls = []
     previous = None
+
+    previous_traversed = None
     traversed_passages = []
 
     if return_passages:    
         for i in shortest_route_by_distance:
             now = i
-            edge = M.get_edge_data(previous, now)
+            edge = M.get_edge_data(previous_traversed, now)
             if edge:
                 traversed_passages.append(edge.get("passage", None))
                 
             fixed_coords = normalize_linestring(previous, now)
             ls.append(fixed_coords)
             previous = fixed_coords
+            previous_traversed = now
 
         return ls, traversed_passages
     else:
