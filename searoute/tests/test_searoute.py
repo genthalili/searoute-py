@@ -6,3 +6,9 @@ def test_passages():
     result_expected = ['suez', 'ormuz', 'babalmandab', 'gibraltar'] 
     true_result = traj['properties']['traversed_passages']
     assert sorted(result_expected)==sorted(true_result)
+
+def test_rev_lat_lon_passages():
+
+    traj = sr.searoute([140.02, 35.51], [-97.36, 27.81], append_orig_dest=True, return_passages=True)
+    true_result = traj['properties']['traversed_passages']
+    assert ['panama'] == true_result
