@@ -11,3 +11,4 @@ docs/
 .venv
 .tox
 
+release_readme.md
