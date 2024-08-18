@@ -84,8 +84,8 @@ def distance(coordinates1, coordinates2, units: str = "km"):
 
     Parameters
     ----------
-    coordinates1 : touble of lat,lon, from location
-    coordinates2 : touble of lat,lon, to location
+    coordinates1 : tuple of lat,lon, from location
+    coordinates2 : tuple of lat,lon, to location
     units : a unit, default is `km`
 
 

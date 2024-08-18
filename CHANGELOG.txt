@@ -94,4 +94,6 @@ Change Log
 1.4.2 (22/08/2024)
 ------------------
 - Improved Marnet around Baltic sea #37
-- Fixed issue with returned passage when crossing the ocean 
+- Fixed issue with returned passage when crossing the ocean #35
+- Adding unit tests
+- Added test for mandatory passages example
