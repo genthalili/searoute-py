@@ -10,6 +10,7 @@ class Passage(str):
     sunda = 'sunda'
     chili = 'chili'
     south_africa = 'south_africa'
+    bering = 'bering'
 
 
     @classmethod

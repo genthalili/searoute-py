@@ -97,3 +97,11 @@ Change Log
 - Fixed issue with returned passage when crossing the ocean #35
 - Adding unit tests
 - Added test for mandatory passages example
+
+1.4.3 (22/02/2025)
+------------------
+- Added CITATION.cff as per suggestion #44
+- Added clarification on README as per suggestion #47
+- Added BERING passage #46
+- Added examples as notebook files #43 #41
+

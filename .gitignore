@@ -12,3 +12,7 @@ docs/
 .tox
 
 release_readme.md
+
+
+# Except for the themes directories:
+!examples/*.ipynb

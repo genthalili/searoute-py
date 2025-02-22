@@ -63,9 +63,13 @@ my_nodes = {
 }
 # (1,2) -> (2,2) with weight, representing the distance, other attributes can be added
 # recognized attributes are : `weight` (distance), `passage` (name of the passage to be restricted by restrictions) 
+# Note: Ensure that both directions of the edge are included. If (u, v) is added, (v, u) should also be included to account for bidirectional relationships.
 my_edges = {
     (1, 2): {
-        (2, 2): {"weight": 10, "other_attr": "some_value"}
+        (2, 2): {"weight": 10, "other_attr": "some_value u->v"}
+    }
+    (2, 2): {
+        (1, 2): {"weight": 10, "other_attr": "some_value v->u"}
     }
 }
 
