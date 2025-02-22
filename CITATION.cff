@@ -6,7 +6,7 @@ authors:
     given-names: "Gent"
     affiliation: "searoute-py author"
 version: "1.4.3"
-date-released: "2024-08-18"
+date-released: "2025-02-22"
 repository-code: "https://github.com/genthalili/searoute-py"
 license: "Apache-2.0"
 license-url: "https://github.com/genthalili/searoute-py/blob/main/LICENCE.txt"
