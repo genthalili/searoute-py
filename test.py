@@ -16,3 +16,11 @@ print(route)
 # Defaults to km, can be can be 'm' = meters 'mi = miles 'ft' = feets 'in' = inches 'deg' = degrees
 # 'cen' = centimeters 'rad' = radians 'naut' = nauticals 'yd' = yards
 routeMiles = sr.searoute(origin, destination, units="mi")
+
+# Define origin and destination points that would be affected by complete closure
+origin=(103.85457, 1.25760) # Singapore - SGSIN
+destination=(23.62904, 37.94056) # Piraeus - GRPIR
+
+closed_route = sr.searoute(origin, destination, restrictions=['suez', 'gibraltar'], return_passages=True)
+
+print(closed_route)

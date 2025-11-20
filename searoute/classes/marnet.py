@@ -1,4 +1,5 @@
 import networkx as nx
+import warnings
 from .passages import Passage
 from ..utils import load_from_geojson, distance
 from .kdtree import KDTree
@@ -105,15 +106,6 @@ class Marnet(nx.Graph):
         else:
             return self
 
-    def custom_weight(self, u, v, edge_data):
-        # Function to customize edge weight based on edge attributes or conditions
-        # For this example, we will avoid edges with a certain attribute (e.g., "avoid": True)
-        edge_values = edge_data.values()
-        avoid_edge = any(value.get('passage', None) in (
-            self.restrictions) for value in edge_values)
-        wights = [value.get('weight', 1.0) for value in edge_values]
-        return float('inf') if avoid_edge else min(wights)
-
     def filter_avoid_passages(self, u, v, edge_data, args):
         edge_values = edge_data.values()
 
@@ -132,10 +124,6 @@ class Marnet(nx.Graph):
         else:
             self.kdtree = KDTree(self._node)
 
-    # Get the shortest route by distance
-    def __custom_w(self, u, v, data):
-        return data.get('weight') if data.get('passage') not in self.restrictions else float('inf')
-
     def shortest_path(self, origin, destination):
         """
         Shortest Path between the origin and the destination.
@@ -150,14 +138,30 @@ class Marnet(nx.Graph):
 
         Returns
         -------
-        A list of nodes building the shortest path
+        A list of nodes building the shortest path, or None if no path exits
         
         """
         origin_node = self.kdtree.query(origin)
         destination_node = self.kdtree.query(destination)
 
-        return nx.shortest_path(
-            self, origin_node, destination_node, weight=self.__custom_w) 
+        def filter_edge(u, v):
+            edge_data = self.get_edge_data(u, v)
+            passage = edge_data.get('passage', None)
+            return passage not in self.restrictions
+        
+        # create subgraph view without restricted edges
+        filtered_graph = nx.subgraph_view(self, filter_edge=filter_edge)
+
+        try:
+            return nx.shortest_path(
+                filtered_graph, origin_node, destination_node, weight='weight')
+        except nx.NetworkXNoPath:
+            warnings.warn(
+                f"No path found between {origin} and {destination}. "
+                f"The route may be blocked by passage restrictions: {self.restrictions}",
+                UserWarning
+            )
+            return None # No path exists
 
     @staticmethod
     def from_geojson(*path):
