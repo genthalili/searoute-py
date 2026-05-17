@@ -60,7 +60,7 @@ It supports two graph backends:
 - **igraph** (optional): C-based, significantly faster for large graphs.
   - Install with: ``pip install searoute[igraph]`` or ``pip install igraph``
 
-Check performance [here](/performance.md).
+Check performances [here](/performance.md).
 
 #### Usage :
 Basic usage with the default networkx backend
@@ -377,12 +377,12 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   ```
 
 * **`backend`** *(optional)*
-  The algorithm to perform shortest distance calculation.
+  The backend graph classe acing as interface to graph/network libraries were searoute operates on.
   Options : `networkx`, `igraph`
 
-  If concerned by performances, use `igraph` which is C-based and **3x times** faster for batch requests.
+  If concerned by performances, use `igraph` which is C-based and **3.9x times** faster for batch requests.
 
-  Check performance [here](/performance.md).
+  Check performances [here](/performance.md).
 
 
   Default:
