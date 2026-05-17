@@ -104,5 +104,5 @@ def benchmark(func, cases, *args, **kwargs):
 
 print("NetworkX Dijkstra:", benchmark(sr.searoute, test_cases))
 print("NetworkX A*:", benchmark(sr.searoute, test_cases, algorithm = "astar"))
-print("igraph Dijkstra:", benchmark(sr.searoute, test_cases, backend = "igrpah"))
+print("igraph Dijkstra:", benchmark(sr.searoute, test_cases, backend = "igraph"))
 ```
