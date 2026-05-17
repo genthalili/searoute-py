@@ -58,7 +58,9 @@ over multiple graph backends.
 It supports two graph backends:
 - **networkx** (default): Pure Python, no extra dependencies.
 - **igraph** (optional): C-based, significantly faster for large graphs.
-  Install with: ``pip install searoute[igraph]`` or ``pip install igraph``
+  - Install with: ``pip install searoute[igraph]`` or ``pip install igraph``
+
+Check performance [here](/performance.md).
 
 #### Usage :
 Basic usage with the default networkx backend
@@ -379,6 +381,8 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   Options : `networkx`, `igraph`
 
   If concerned by performances, use `igraph` which is C-based and **3x times** faster for batch requests.
+
+  Check performance [here](/performance.md).
 
 
   Default:
