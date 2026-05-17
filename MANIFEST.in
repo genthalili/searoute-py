@@ -1,4 +1,4 @@
-global-include *.txt *.py *.json data/* data/marnet_densified.json
+global-include *.txt *.py *pyx *.json data/* data/marnet_densified.json
 prune .tox
 prune .venv
 prune docs

@@ -1,7 +1,5 @@
 from setuptools import setup, find_packages
 
-from os import path
-here = path.abspath(path.dirname(__file__))
 
 classifiers = [
     'Development Status :: 5 - Production/Stable',
@@ -18,7 +16,7 @@ classifiers = [
 
 setup(
     name='searoute',
-    version='1.5.0',
+    version='1.6.0',
     description='A python package for generating the shortest sea route between two points on Earth.',
     long_description=open('README.md').read() + '\n\n' +
     open('CHANGELOG.txt').read(),
@@ -26,7 +24,7 @@ setup(
     url='',
     author='Gent Halili',
     author_email='genthalili@users.noreply.github.com',
-    license='Apache License 2.0',
+    license='Apache-2.0',
     classifiers=classifiers,
     keywords='searoute map sea route ocean ports',
     packages=find_packages(),
@@ -36,4 +34,8 @@ setup(
         "Source": "https://github.com/genthalili/searoute-py",
     },
     include_package_data=True,
+    extras_require={
+        "igraph": ["igraph>=0.11.0"],
+        "all": ["igraph>=0.11.0"]
+    }
 )

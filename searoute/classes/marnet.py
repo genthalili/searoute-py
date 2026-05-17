@@ -1,10 +1,9 @@
-import networkx as nx
 from .passages import Passage
-from ..utils import load_from_geojson, distance
+from ..utils import load_from_geojson, distance, haversine
 from .kdtree import KDTree
+from .core import Graph, bidirectional_dijkstra, astar_path
 
-
-class Marnet(nx.Graph):
+class Marnet(Graph):
     """Base class for maritime network is an undirected graph. 
 
     A Marnet stores nodes and edges with optional data, or attributes.
@@ -16,20 +15,22 @@ class Marnet(nx.Graph):
     
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwds):
+        super().__init__(*args, **kwds)
         DEFAULT_CRF = 'EPSG:3857'
         self.graph['crs'] = DEFAULT_CRF  # CRS attribute for the graph
         self.restrictions = [Passage.northwest]
         self.kdtree = KDTree()
 
+        #_restricted_view = self.query()
+
     def add_node(self, node, **attr):
         if not isinstance(node, tuple):
             raise TypeError(
                 "Node must be a tuple representing the coordinates.")
-        x, y = node
-        attr['x'] = x
-        attr['y'] = y
+        #x, y = node
+        #attr['x'] = x
+        #attr['y'] = y
 
         self.kdtree.add_point(node)
         super().add_node(node, **attr)
@@ -105,22 +106,6 @@ class Marnet(nx.Graph):
         else:
             return self
 
-    def custom_weight(self, u, v, edge_data):
-        # Function to customize edge weight based on edge attributes or conditions
-        # For this example, we will avoid edges with a certain attribute (e.g., "avoid": True)
-        edge_values = edge_data.values()
-        avoid_edge = any(value.get('passage', None) in (
-            self.restrictions) for value in edge_values)
-        wights = [value.get('weight', 1.0) for value in edge_values]
-        return float('inf') if avoid_edge else min(wights)
-
-    def filter_avoid_passages(self, u, v, edge_data, args):
-        edge_values = edge_data.values()
-
-        avoid_edge = any(value.get('passage', None) in (
-            self.restrictions or []) for value in edge_values)
-
-        return not (avoid_edge)
 
     def load_geojson(self, *path):
         return load_from_geojson(self, *path)
@@ -133,11 +118,18 @@ class Marnet(nx.Graph):
             self.kdtree = KDTree(self._node)
 
     # Get the shortest route by distance
-    def __custom_w(self, u, v, data):
-        return data.get('weight') if data.get('passage') not in self.restrictions else float('inf')
-    
+    def __make_weight_fn(self):
+        restrictions = self.restrictions  # local ref, faster lookup
+        inf = float('inf')
 
-    def shortest_path(self, origin, destination):
+        def weight_fn(u, v, data):
+            if data.get('passage') in restrictions:
+                return inf
+            return data.get('weight')
+        return weight_fn
+    
+    
+    def shortest_path(self, origin, destination, algorithm:str = 'dijkstra'):
         """
         Shortest Path between the origin and the destination.
         Dijkstra algorithm is used to perform the calculation.
@@ -158,9 +150,24 @@ class Marnet(nx.Graph):
         """
         origin_node = self.kdtree.query(origin)
         destination_node = self.kdtree.query(destination)
-
-        return nx.bidirectional_dijkstra(
-            self, origin_node, destination_node, weight=self.__custom_w) 
+        
+        weight = self.__make_weight_fn()
+    
+        # dijkstra option 
+        if algorithm == "dijkstra" or algorithm is None:
+            return bidirectional_dijkstra(
+                self, origin_node, destination_node, weight)
+        elif algorithm == "astar":
+            # a*
+            
+            #g_path = astar_path(self, origin_node, destination_node, heuristic=distance, weight=weight)
+            #total_ln = sum(weight(u, v, self[u][v]) for u, v in zip(g_path[:-1], g_path[1:]))
+            #return total_ln, g_path
+            return astar_path(self, origin_node, destination_node, heuristic=distance, weight=weight)
+        
+        else:
+            raise Exception("Algorithm not supported, please use dijkstra (default) or astar")
+    
     
 
     @staticmethod

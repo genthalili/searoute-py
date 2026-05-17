@@ -112,3 +112,12 @@ Change Log
 - Updated README
 
 
+1.6.0 (15/03/2026)
+------------------
+- Improvements in marnet geojson (PR #56)
+- Minor fix undetached graph in marnet geojson 
+- Added graph interface and making possible to use igraph(C based) or networkx(python)
+- Added `algorithm` option for performing shortest distance calculation
+- Updated CITATION
+- Updated README
+

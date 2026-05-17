@@ -51,6 +51,7 @@ def get_features_with_stops( origin, dest, mandatory_passages):
         # get second point of found passage
         yp,xp = mid_pt[1]
         lst.append(((yp,xp), key))
+        lst.append((mid_pt[0], key))
 
     fts = []
     step = origin

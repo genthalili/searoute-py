@@ -108,6 +108,18 @@ def distance(coordinates1, coordinates2, units: str = "km"):
     return b * avg_earth_radius_km * conversions[units]
 
 
+def haversine(u, v):
+    R = 6371  # Earth radius in km
+    lon1, lat1 = radians(u[0]), radians(u[1])
+    lon2, lat2 = radians(v[0]), radians(v[1])
+    
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    return R * 2 * atan2(sqrt(a), sqrt(1 - a))
+
+
 def distance_length(line: list, units: str = "km"):
     """
     Length of a line of coordinates 

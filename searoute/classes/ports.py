@@ -1,4 +1,4 @@
-import networkx as nx
+from .core import Graph
 
 from ..utils import load_from_geojson
 from .kdtree import KDTree
@@ -7,10 +7,10 @@ from geojson import FeatureCollection
 from itertools import product
 
 
-class Ports(nx.Graph):
+class Ports(Graph):
     """
     Base class for Ports network is an undirected graph. 
-s
+
     A Ports graph stores nodes and edges with optional data, or attributes.
 
     Nodes are identified by an id of tuple representing a spacial location
@@ -20,8 +20,8 @@ s
 
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         DEFAULT_CRF = 'EPSG:3857'
         self.graph['crs'] = DEFAULT_CRF  # CRS attribute for the graph
         self.kdtree = KDTree()
@@ -30,9 +30,9 @@ s
         if not isinstance(node, tuple):
             raise TypeError(
                 "Node must be a str representing coordinates of a port.")
-        x, y = node
-        attr['x'] = x
-        attr['y'] = y
+        #x, y = node
+        #attr['x'] = x
+        #attr['y'] = y
         if not (attr['port'] and attr['cty']):
             raise TypeError(
                 "Node port requires to have both port name (name), and country (cty) in properties to be correctly mapped")
@@ -41,14 +41,13 @@ s
         super().add_node(node, **attr)
 
 
-    def __copy__(self):
-        cls = self.__class__
-        result = cls.__new__(cls)
-        result.__dict__.update(self.__dict__)
-        return result
+    #def __copy__(self):
+    #    cls = self.__class__
+    #    result = cls.__new__(cls)
+    #    result.__dict__.update(self.__dict__)
+    #    return result
 
     def subgraph(self, nodes):
-
         subg = super().subgraph(nodes)
         subg.kdtree = KDTree(nodes)
 
@@ -233,6 +232,7 @@ s
                 pref_ports_to = [(port_dest.get('port', None), 1 , port_dest)]
 
         return list(product(pref_ports_from, pref_ports_to))
+
 
     def get_preferred_ports(self, x, y, ft:FeatureCollection, top = None, include_area_name = False, strict_area = True):
         """

@@ -51,6 +51,26 @@ print("{:.1f} {}".format(route.properties['length'], route.properties['units']))
 # 'cen' = centimeters 'rad' = radians 'naut' = nautical 'yd' = yards
 routeMiles = sr.searoute(origin, destination, units="mi")
 ~~~
+### Graph backend :
+Core graph abstraction layer for searoute, providing a unified interface
+over multiple graph backends.
+
+It supports two graph backends:
+- **networkx** (default): Pure Python, no extra dependencies.
+- **igraph** (optional): C-based, significantly faster for large graphs.
+  Install with: ``pip install searoute[igraph]`` or ``pip install igraph``
+
+#### Usage :
+Basic usage with the default networkx backend
+```py
+
+sr.searoute(..., backend = "igraph")  # build the network with igraph
+
+m = Marnet()                          # defaults to networkx
+m = Marnet(backend="networkx")        # explicit networkx
+m = Marnet(backend="igraph")          # igraph (if installed)
+```
+
 ### Bring your network :
 ```py
 # using version >= 1.2.0
@@ -204,8 +224,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   (lon, lat)
   ```
 
----
-
 * **`destination`** *(required)*
   Tuple or array of two floats representing the **longitude and latitude** of the destination point.
 
@@ -214,8 +232,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   ```
   (lon, lat)
   ```
-
----
 
 * **`units`** *(optional)*
   Unit used to compute the route distance.
@@ -228,8 +244,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   Supported values:
   `km` = kilometers, `m` = meters `mi` = miles `ft` = feets `in` = inches `deg` = degrees `cen` = centimeters `rad` = radians `naut` = nauticals `yd` = yards
 
----
-
 * **`speed_knot`** *(optional)*
   Vessel speed used to estimate route duration.
 
@@ -241,8 +255,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
 
   Unit: **knots**
 
----
-
 * **`append_orig_dest`** *(optional)*
   If `True`, the origin and destination coordinates will be appended to the returned `LineString`.
 
@@ -251,8 +263,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   ```
   False
   ```
-
----
 
 * **`restrictions`** *(optional)*
   List of maritime passages to **avoid during route calculation**.
@@ -265,8 +275,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
 
   Supported values:  `babalmandab`, `bosporus`, `gibraltar`, `suez`, `panama`, `ormuz`, `northwest`, `malacca`, `sunda`, `chili`, `south_africa`
 
----
-
 * **`include_ports`** *(optional)*
   If `True`, the algorithm includes the **port of loading (POL)** and **port of discharge (POD)** in the result.
 
@@ -275,8 +283,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   ```
   False
   ```
-
----
 
 * **`port_params`** *(optional)*
   Additional configuration used when `include_ports=True`.
@@ -344,8 +350,6 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
     * `False` → if the point is outside all areas, the **closest area** is used.
     * `True` → if the point is outside all areas, the configuration is ignored.
 
----
-
 * **`return_passages`** *(optional)*
   If `True`, the result will include the **list of traversed maritime passages**.
 
@@ -355,9 +359,33 @@ sr.searoute(..., include_ports = True, port_params = {'ports_in_areas': areas})
   False
   ```
 
----
+* **`algorithm`** *(optional)*
+  The algorithm to perform shortest distance calculation.
+  Options : `dijkstra`, `astar`
+
+  If concerned by performances, use `astar`.
 
 
+  *Note : The `A star` algorithm uses the Haversine distance heuristic, and only available for `backend= "networkx"`.* 
+
+  Default:
+
+  ```
+  None (dijkstra)
+  ```
+
+* **`backend`** *(optional)*
+  The algorithm to perform shortest distance calculation.
+  Options : `networkx`, `igraph`
+
+  If concerned by performances, use `igraph` which is C-based and **3x times** faster for batch requests.
+
+
+  Default:
+
+  ```
+  networkx
+  ```
 
 # Return Value
 
@@ -377,7 +405,6 @@ List[GeoJSON Feature]
 ## Credits
 
 - [NetworkX](https://networkx.org/), a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks.
+- [igraph](https://python.igraph.org/en/stable), a Python interface of igraph, a fast and open source C library to manipulate and analyze graphs.
 - [GeoJson](https://github.com/jazzband/geojson), a python package for GeoJSON
-- [turfpy](https://github.com/omanges/turfpy), a Python library for performing geo-spatial data analysis which reimplements turf.js. (up to version `searoute 1.1.0`)
-- [OSMnx](https://github.com/gboeing/osmnx), for geo-spacial networks. (up to version `searoute 1.1.0`)
 - Eurostat's [Searoute Java library](https://github.com/eurostat/searoute)

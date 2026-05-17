@@ -1,23 +1,36 @@
 
-from .classes import ports, marnet, passages
+from .classes import ports, marnet, passages 
+
 from .utils import get_duration, distance_length, from_nodes_edges_set, process_route, validate_lon_lat, raise_warn_no_path
 from geojson import Feature, LineString
 
 from functools import lru_cache
-from copy import copy
+#from copy import copy
+
 
 @lru_cache(maxsize=None)
-def setup_P():
+def setup_P(backend = None):
     from .data.ports_dict import edge_list as port_e, node_list as port_n
-    return from_nodes_edges_set(ports.Ports(), port_n, port_e)
+    return from_nodes_edges_set(ports.Ports(backend = backend), port_n, port_e)
 
 @lru_cache(maxsize=None)
-def setup_M():
+def setup_M(backend = None):
     from .data.marnet_dict import edge_list as marnet_e, node_list as marnet_n
-    return from_nodes_edges_set(marnet.Marnet(), marnet_n, marnet_e)
+    return from_nodes_edges_set(marnet.Marnet(backend = backend), marnet_n, marnet_e)
 
 
-def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=None, P:ports.Ports=None, return_passages:bool = False):
+
+def get_graphs(M = None, P = None, backend = None):
+    if M is None:
+        M = setup_M(backend)#copy(setup_M())
+
+    if P is None:
+        P = setup_P(backend)#copy(setup_P())
+
+    return M, P
+
+
+def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=False, restrictions=[passages.Passage.northwest], include_ports=False, port_params={}, M:marnet.Marnet=None, P:ports.Ports=None, return_passages:bool = False, algorithm = None, backend="networkx"):
     """
     Calculates the shortest sea route between two points on Earth.
 
@@ -43,16 +56,20 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
                             If there are many ports then the result will be a list of GeoJson Features, instead of an object of GeoJson Feature.
                             Preferred ports with share = 0 will be ignored.
     return_passages : boolean to return traversed passages (default is `False`)
+    algorithm : str one of `dijkstra` or `astar`, default `dijkstra`
+    backend : str one of `networkx` or `igraph`, default `networkx` chose between backend graph class
 
     Returns
     -------
     a Feature (geojson) of a LineString of sea route with parameters : `unit` and `length`, `duration_hours` or port details, others
     """
 
-    if M is None:
-        M = copy(setup_M())
-    if P is None:
-        P = copy(setup_P())
+    #if M is None:
+    #    M = copy(setup_M())
+    #if P is None:
+    #    P = copy(setup_P())
+    M, P = get_graphs(M, P, backend)
+
     # Validate origin input
     validate_lon_lat(origin)
     # Validate destination input
@@ -72,8 +89,6 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
     if restrictions is not None:
         M.restrictions = restrictions
 
-    # H = nx.subgraph_view(G, filter_edge=filter_edge)
-
     if include_ports:
         if not port_params:
             port_params = {}
@@ -83,13 +98,13 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
         port_matrix = [(None, None)]
 
 
-    def _get_feature(o_origin, o_destination, origin, destination, port_origin, port_dest, include_ports, append_orig_dest ):
+    def _get_feature(o_origin, o_destination, origin, destination, port_origin, port_dest, include_ports, append_orig_dest, algorithm):
 
         # Get shortest route from the Marnet network 
         # if origin or destination is not present in M, searches from the closest one
         # if path is restricted then returns the next shortest possible one
         # if no paths are found due to restricted passages, length will be inf 
-        length_km, shortest_route_by_distance = M.shortest_path(origin, destination)
+        length_km, shortest_route_by_distance = M.shortest_path(origin, destination, algorithm)
 
         # route path will be set to empty if length is inf due to restrictive passages
         if shortest_route_by_distance is None or length_km == float('inf'):
@@ -145,7 +160,7 @@ def searoute(origin, destination, units='km', speed_knot=24, append_orig_dest=Fa
             pProp['share'] = share
             pTo = pProp
 
-        res = _get_feature(o_origin, o_destination, origin, destination, pFrom, pTo, include_ports, append_orig_dest )
+        res = _get_feature(o_origin, o_destination, origin, destination, pFrom, pTo, include_ports, append_orig_dest, algorithm)
         result.append(res)
 
 
