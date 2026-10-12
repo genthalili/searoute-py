@@ -1,0 +1,38 @@
+{
+  "before-harbour": {
+    "input_on_land": false,
+    "route_intersects_land": true,
+    "length_km": 205.56894383288508,
+    "snapped_node": [
+      -17.183808,
+      33.116222
+    ]
+  },
+  "before-cached": {
+    "input_on_land": true,
+    "route_intersects_land": true,
+    "length_km": 203.6884929961667,
+    "snapped_node": [
+      -17.183808,
+      33.116222
+    ]
+  },
+  "after-harbour": {
+    "input_on_land": false,
+    "route_intersects_land": false,
+    "length_km": 132.47178219641322,
+    "snapped_node": [
+      -16.900556,
+      32.634167
+    ]
+  },
+  "after-cached": {
+    "input_on_land": true,
+    "route_intersects_land": true,
+    "length_km": 134.35387859188086,
+    "snapped_node": [
+      -16.900556,
+      32.634167
+    ]
+  }
+}

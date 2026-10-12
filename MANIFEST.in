@@ -1,4 +1,5 @@
 global-include *.txt *.py *pyx *.json data/* data/marnet_densified.json
+recursive-include searoute/tests/fixtures *.geojson COPYING* README.md
 prune .tox
 prune .venv
 prune docs
