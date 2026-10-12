@@ -1,0 +1,17 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -17.183808,
+        33.116222
+      ]
+    ]
+  },
+  "properties": {
+    "length": 0,
+    "units": "km",
+    "duration_hours": 0.0
+  }
+}
